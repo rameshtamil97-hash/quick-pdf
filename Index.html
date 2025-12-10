@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I ❤️ PDF – All Tools in One Page</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial;
+    background: #7f7e7e; /* BLACK BACKGROUND */
+    }
+
+    header {
+        background: #070707;
+        padding: 20px;
+        color: #eef2f4;  /* BLUE ACCENT */
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* Home Grid */
+    .tool-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .tool-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 7px 20px rgba(239, 238, 238, 0.15);
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .tool-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.20);
+    }
+    .tool-card img {
+        width: 65px;
+    }
+    .tool-card-title {
+        font-size: 20px;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #070707;
+    }
+
+    /* Tool Section */
+    .tool-section {
+        display: none;
+        background: white;
+        margin-top: 30px;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 7px 20px rgba(0,0,0,0.1);
+    }
+
+    textarea, input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        margin-top: 20px;
+        background: #070707;
+        color: white;
+        border-radius: 10px;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    button:hover { background: #b71c1c; }
+
+    #previewBox {
+        margin-top: 20px;
+        padding: 20px;
+        min-height: 200px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        background: #fafafa;
+    }
+
+    .back-btn {
+        color: #d32f2f;
+        cursor: pointer;
+        display: block;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<header>QUICK ❤️ PDF</header>
+
+<div class="container">
+
+    <!-- HOME PAGE -->
+    <div id="homePage">
+
+        <h2 style="text-align:center;">Choose a Tool</h2>
+
+        <div class="tool-grid">
+
+            <div class="tool-card" onclick="openTool('textTool')">
+                <img src="https://cdn-icons-png.flaticon.com/512/564/564619.png">
+                <div class="tool-card-title">Text to PDF</div>
+            </div>
+
+            <div class="tool-card" onclick="openTool('imageTool')">
+                <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png">
+                <div class="tool-card-title">Image to PDF</div>
+            </div>
+
+            <div class="tool-card" onclick="openTool('htmlTool')">
+                <img src="https://cdn-icons-png.flaticon.com/512/4248/4248443.png">
+                <div class="tool-card-title">HTML to PDF</div>
+            </div>
+
+            <div class="tool-card" onclick="openTool('fileTool')">
+                <img src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png">
+                <div class="tool-card-title">File to PDF</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TOOL PAGES (ALL IN ONE FILE) -->
+
+    <!-- TEXT TOOL -->
+    <div id="textTool" class="tool-section">
+        <span class="back-btn" onclick="goHome()">⬅ Back</span>
+        <h3>Text to PDF</h3>
+        <textarea id="textInput" placeholder="Type here..."></textarea>
+        <button onclick="textToPDF()">Download PDF</button>
+    </div>
+
+    <!-- IMAGE TOOL -->
+    <div id="imageTool" class="tool-section">
+        <span class="back-btn" onclick="goHome()">⬅ Back</span>
+        <h3>Image to PDF</h3>
+        <input type="file" id="imgInput" accept="image/*" onchange="previewImage()">
+        <div id="previewBox"></div>
+        <button onclick="convertPDF()">Download PDF</button>
+    </div>
+
+    <!-- HTML TOOL -->
+    <div id="htmlTool" class="tool-section">
+        <span class="back-btn" onclick="goHome()">⬅ Back</span>
+        <h3>HTML to PDF</h3>
+        <textarea id="htmlInput" placeholder="<h1>Hello PDF</h1>"></textarea>
+        <button onclick="htmlToPDF()">Download PDF</button>
+    </div>
+
+    <!-- FILE TOOL -->
+    <div id="fileTool" class="tool-section">
+        <span class="back-btn" onclick="goHome()">⬅ Back</span>
+        <h3>File to PDF</h3>
+        <input type="file" id="fileInput" onchange="previewFile()">
+        <div id="previewBoxFile"></div>
+        <button onclick="fileToPDF()">Download PDF</button>
+    </div>
+
+</div>
+
+
+<script>
+
+// Open tool section
+function openTool(id) {
+    document.getElementById("homePage").style.display = "none";
+    document.querySelectorAll(".tool-section").forEach(sec => sec.style.display = "none");
+    document.getElementById(id).style.display = "block";
+}
+
+// Back to home
+function goHome() {
+    document.querySelectorAll(".tool-section").forEach(sec => sec.style.display = "none");
+    document.getElementById("homePage").style.display = "block";
+}
+
+/* TEXT → PDF */
+function textToPDF() {
+    let text = document.getElementById("textInput").value;
+    let div = document.createElement("div");
+    div.innerHTML = text.replace(/\n/g, "<br>");
+    html2pdf().from(div).save("Text.pdf");
+}
+
+/* HTML → PDF */
+function htmlToPDF() {
+    let html = document.getElementById("htmlInput").value;
+    let div = document.createElement("div");
+    div.innerHTML = html;
+    html2pdf().from(div).save("HTML.pdf");
+}
+
+/* IMAGE PREVIEW */
+function previewImage() {
+    let file = document.getElementById("imgInput").files[0];
+    let reader = new FileReader();
+    reader.onload = () => {
+        document.getElementById("previewBox").innerHTML =
+            `<img src="${reader.result}" style="width:100%;border-radius:10px;">`;
+    };
+    reader.readAsDataURL(file);
+}
+
+/* IMAGE → PDF */
+function convertPDF() {
+    let img = document.querySelector("#previewBox img");
+    if (!img) { alert("Upload an image first!"); return; }
+    html2pdf().from(img).save("Image.pdf");
+}
+
+/* FILE PREVIEW */
+function previewFile() {
+    let file = document.getElementById("fileInput").files[0];
+    let reader = new FileReader();
+
+    if (file.type.startsWith("image/")) {
+        reader.onload = () => document.getElementById("previewBoxFile").innerHTML =
+            `<img src="${reader.result}" style="width:100%;border-radius:10px;">`;
+        reader.readAsDataURL(file);
+    }
+    else if (file.name.endsWith(".txt") || file.name.endsWith(".html")) {
+        reader.onload = () => document.getElementById("previewBoxFile").innerHTML =
+            `<pre>${reader.result}</pre>`;
+        reader.readAsText(file);
+    }
+}
+
+/* FILE → PDF */
+function fileToPDF() {
+    let box = document.getElementById("previewBoxFile");
+    html2pdf().from(box).save("File.pdf");
+}
+
+</script>
+
+</body>
+</html>
